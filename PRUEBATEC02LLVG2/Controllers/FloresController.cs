@@ -56,16 +56,26 @@ namespace PRUEBATEC02LLVG2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Precio,Imagen,TipoId")] Flore flore)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Precio,TipoId")] Flore flore, IFormFile imagen)
         {
-            if (ModelState.IsValid)
+            if (imagen != null && imagen.Length > 0)
             {
-                _context.Add(flore);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imagen.CopyToAsync(memoryStream);
+                    flore.Imagen = memoryStream.ToArray();
+
+                }
             }
-            ViewData["TipoId"] = new SelectList(_context.Especies, "Id", "Nombre", flore.TipoId);
-            return View(flore);
+
+            _context.Add(flore);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+            ////if (ModelState.IsValid)
+            //{
+            //}
+            //ViewData["TipoId"] = new SelectList(_context.Especies, "Id", "Nombre", flore.TipoId);
+            //return View(flore);
         }
 
         // GET: Flores/Edit/5
@@ -112,12 +122,8 @@ namespace PRUEBATEC02LLVG2.Controllers
                 if (producFind?.Imagen?.Length > 0)
                     flore.Imagen = producFind.Imagen;
                 producFind.Nombre = flore.Nombre;
-                producFind.Oficio = flore.Oficio;
-                producFind.Dir = flore.Dir;
-                producFind.FechaAlt = flore.FechaAlt;
-                producFind.Salario = flore.Salario;
-                producFind.Comision = flore.Comision;
-                producFind.DeptNo = flore.DeptNo;
+                producFind.Descripcion= flore.Descripcion;
+                producFind.Precio = flore.Precio;
 
                 _context.Update(producFind);
                 await _context.SaveChangesAsync();
