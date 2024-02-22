@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using PRUEBATEC02LLVG2.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<PRUEBATEC02LLVG2Context>(options =>
+   options.UseSqlServer(builder.Configuration.GetConnectionString("cnn")));
+
 
 var app = builder.Build();
 

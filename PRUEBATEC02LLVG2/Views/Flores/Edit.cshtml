@@ -1,0 +1,86 @@
+﻿@model PRUEBATEC02LLVG2.Models.Flore
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Editar</h1>
+
+<h4>Flores</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Precio" class="control-label"></label>
+                <input asp-for="Precio" class="form-control" />
+                <span asp-validation-for="Precio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Imagen" class="control-label"></label>
+                <input type="file" id="fileImagen" asp-for="Imagen" class="form-control" onchange="mostrarVistaPrevia()" accept="image/*" />
+                <span asp-validation-for="Imagen" class="text-danger"></span>
+            </div>
+            <div>
+                @{
+                    string urlBase64 = "";
+                    if (Model.Imagen != null && Model.Imagen.Length > 0)
+                    {
+                        string base64String = Convert.ToBase64String(Model.Imagen);
+                        urlBase64 = "data:image/jpeg;base64," + base64String;
+                    }
+                }
+                @if (urlBase64.Trim().Length > 0)
+                {
+                    <img id="imagenPrevia" src="@urlBase64" alt="Vista previa de la imagen" style="max-width: 100px; max-height: 100px;">
+                }
+                else
+                {
+                    <img id="imagenPrevia" src="~/imagenes/default.jpg" alt="Vista previa de la imagen" style="max-width: 100px; max-height: 100px;">
+                }
+
+
+            </div>
+            <div class="form-group">
+                <label asp-for="TipoId" class="control-label"></label>
+                <select asp-for="TipoId" class="form-control" asp-items="ViewBag.TipoId"></select>
+                <span asp-validation-for="TipoId" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-dark">Regresar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function mostrarVistaPrevia() {
+            var input = document.getElementById('fileImagen');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('imagenPrevia').src = e.target.result;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
